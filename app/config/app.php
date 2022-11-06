@@ -155,6 +155,12 @@ return [
 
 "key" => env("APP_KEY"),
 
-"cipher" => "AES-256-CBC"
+"cipher" => "AES-256-CBC",
+
+"antispam_service_address" => env("ANTISPAM_SERVICE_ADDRESS"),
+
+"cli_auth" => env("SOCKET_CLI_AUTH"),
+
+"log_path" => env("LOG_PATH")
 
 ];

@@ -28,6 +28,7 @@
 declare(strict_types=1);
 
 use App\Console\Kernel as ConsoleKernel;
+use App\Domain\AntispamMailService;
 use App\Exceptions\Handler;
 use Conjoon\Horde\Mail\Client\Imap\HordeClient;
 use Conjoon\Horde\Mail\Client\Message\Composer\HordeAttachmentComposer;
@@ -35,6 +36,7 @@ use Conjoon\Horde\Mail\Client\Message\Composer\HordeBodyComposer;
 use Conjoon\Horde\Mail\Client\Message\Composer\HordeHeaderComposer;
 use Conjoon\Illuminate\Auth\Imap\DefaultImapUserProvider;
 use Conjoon\Illuminate\Auth\Imap\ImapUserProvider;
+use Conjoon\Illuminate\Mail\Client\Request\Attachment\Transformer\LaravelAttachmentListJsonTransformer;
 use Conjoon\Mail\Client\Attachment\Processor\InlineDataProcessor;
 use Conjoon\Mail\Client\Data\MailAccount;
 use Conjoon\Mail\Client\Folder\Tree\DefaultMailFolderTreeBuilder;
@@ -45,7 +47,6 @@ use Conjoon\Mail\Client\Reader\DefaultPlainReadableStrategy;
 use Conjoon\Mail\Client\Reader\PurifiedHtmlStrategy;
 use Conjoon\Mail\Client\Reader\ReadableMessagePartContentProcessor;
 use Conjoon\Mail\Client\Request\Attachment\Transformer\AttachmentListJsonTransformer;
-use Conjoon\Illuminate\Mail\Client\Request\Attachment\Transformer\LaravelAttachmentListJsonTransformer;
 use Conjoon\Mail\Client\Request\Message\Transformer\DefaultMessageBodyDraftJsonTransformer;
 use Conjoon\Mail\Client\Request\Message\Transformer\DefaultMessageItemDraftJsonTransformer;
 use Conjoon\Mail\Client\Request\Message\Transformer\MessageBodyDraftJsonTransformer;
@@ -62,6 +63,9 @@ use Conjoon\Mail\Client\Writer\WritableMessagePartContentProcessor;
 use Conjoon\Text\CharsetConverter;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 // helper function to make sure Services can share HordeClients for the same account
 $mailClients = [];
@@ -167,4 +171,21 @@ $app->singleton(MessageItemService::class, function ($app) use ($getMailClient) 
             $readableMessagePartContentProcessor
         )
     );
+});
+
+$app->bind(LoggerInterface::class, function ($app) {
+    $logger = new Logger('default');
+    $logger->pushHandler(new StreamHandler(config("app.log_path"), Logger::INFO));
+    return $logger;
+});
+
+$app->singleton(AntispamMailService::class, function ($app) {
+    $logger = $app->get(LoggerInterface::class);
+
+    $client = new GuzzleHttp\Client([
+        'base_uri' => config('app.antispam_service_address'),
+        'timeout' => 5,
+    ]);
+
+    return new AntispamMailService($client, $logger);
 });

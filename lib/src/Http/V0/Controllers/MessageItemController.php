@@ -29,9 +29,9 @@ declare(strict_types=1);
 
 namespace App\Http\V0\Controllers;
 
-use App\Http\V0\Query\MessageItem\IndexRequestQueryTranslator;
+use App\Domain\AntispamMailService;
 use App\Http\V0\Query\MessageItem\GetRequestQueryTranslator;
-use Illuminate\Support\Facades\Auth;
+use App\Http\V0\Query\MessageItem\IndexRequestQueryTranslator;
 use Conjoon\Mail\Client\Data\CompoundKey\FolderKey;
 use Conjoon\Mail\Client\Data\CompoundKey\MessageKey;
 use Conjoon\Mail\Client\Message\Flag\DraftFlag;
@@ -42,8 +42,9 @@ use Conjoon\Mail\Client\Request\Message\Transformer\MessageBodyDraftJsonTransfor
 use Conjoon\Mail\Client\Request\Message\Transformer\MessageItemDraftJsonTransformer;
 use Conjoon\Mail\Client\Service\MessageItemService;
 use Conjoon\Util\ArrayUtil;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class MessageItemController
@@ -68,21 +69,29 @@ class MessageItemController extends Controller
     protected MessagebodyDraftJsonTransformer $messageBodyDraftJsonTransformer;
 
     /**
+     * @type AntispamMailService
+     */
+    protected AntispamMailService $antispamMailService;
+
+    /**
      * MessageItemController constructor.
      *
      * @param MessageItemService $messageItemService
      * @param MessageItemDraftJsonTransformer $messageItemDraftJsonTransformer
      * @param MessageBodyDraftJsonTransformer $messageBodyDraftJsonTransformer
+     * @param AntispamMailService $antispamMailService
      */
     public function __construct(
         MessageItemService $messageItemService,
         MessageItemDraftJsonTransformer $messageItemDraftJsonTransformer,
-        MessagebodyDraftJsonTransformer $messageBodyDraftJsonTransformer
+        MessagebodyDraftJsonTransformer $messageBodyDraftJsonTransformer,
+        AntispamMailService $antispamMailService
     ) {
 
         $this->messageItemService              = $messageItemService;
         $this->messageItemDraftJsonTransformer = $messageItemDraftJsonTransformer;
         $this->messageBodyDraftJsonTransformer = $messageBodyDraftJsonTransformer;
+        $this->antispamMailService             = $antispamMailService;
     }
 
 
@@ -509,6 +518,16 @@ class MessageItemController extends Controller
 
         $messageKey = new MessageKey($mailAccount, $mailFolderId, $messageItemId);
 
+        $headers = [];
+        $from = $mailAccount->getFrom();
+
+        $transactionId = $this->antispamMailService->takePayment($from["address"]);
+
+        if (!is_null($transactionId)) {
+            $headers['X-TRANSACTION-ID'] = $transactionId;
+        }
+
+        // TODO: send headers
         $status = $messageItemService->sendMessageDraft($messageKey);
 
         if (!$status) {
