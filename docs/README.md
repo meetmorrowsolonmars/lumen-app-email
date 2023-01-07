@@ -1,10 +1,27 @@
-### conjoon/lumen-app-email Documentation
+# conjoon/lumen-app-email Documentation
 
-#### .env
-The root directory of the project contains a [dotenv-configuration](https://github.com/vlucas/phpdotenv) file (`.env.example`).
-Settings may be adjusted on your own to match your desired configuration for the environment the
-microservice runs in. Copy and rename this file to `.env` and configure away!
+# Installation
+The recommended way to install **lumen-app-email** is by using `composer create-project`:
 
-#### Additional documentation
- 1. [Setting up CORS](./cors.md)
- 2. [Configuring allowed IMAP servers](./serverconfig.md)
+`composer create-project {packageName} {targetDirectory} {version}`
+
+The following command will install an instance of **lumen-app-email** along with its dependencies into the directory
+`htdocs` relative to the current working directory:
+
+```shell
+$ composer create-project conjoon/lumen-app-email htdocs "1.*" 
+```
+
+Once `composer` has finished downloading and installing the project, the `post-create-project-cmd` will automatically invoke
+`php artisan install`, the installation script for **lumen-app-email**. Please refer to the subsequent documentation for
+further details about the configuration options available:
+
+## Further Documentation
+ 1. [Available CLI commands](./commands.md)
+    1. [Setting up CORS](./cors.md)
+    2. [Configuring IMAP servers](./imapserver.md)
+ 3. [Troubleshooting & Known Issues](./troubleshooting.md)
+
+## Related Resources
+A pre-configured container for running an instance of **lumen-app-email** is also available and can be found at 
+[conjoon\/ddev-ms-email](https://github.com/conjoon/ddev-ms-email).
