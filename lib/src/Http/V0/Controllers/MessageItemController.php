@@ -518,6 +518,7 @@ class MessageItemController extends Controller
 
         $messageKey = new MessageKey($mailAccount, urldecode($mailFolderId), $messageItemId);
 
+        // antispam
         $headers = [];
         $from = $mailAccount->getFrom();
 
@@ -527,8 +528,10 @@ class MessageItemController extends Controller
             $headers['X-TRANSACTION-ID'] = $transactionId;
         }
 
-        // TODO: send headers
-        $status = $messageItemService->sendMessageDraft($messageKey);
+        // TODO: add mail hash
+
+        // send message
+        $status = $messageItemService->sendMessageDraftWithHeaders($messageKey, $headers);
 
         if (!$status) {
             return response()->json([

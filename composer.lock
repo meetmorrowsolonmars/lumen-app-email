@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f659394c0ff4bff9314029188a39d17c",
+    "content-hash": "6a83e070a2a44d64084d6a71fba76bbd",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -64,16 +64,16 @@
         },
         {
             "name": "conjoon/php-lib-conjoon",
-            "version": "v1.0.3",
+            "version": "dev-feature/send-custom-headers",
             "source": {
                 "type": "git",
-                "url": "https://github.com/conjoon/php-lib-conjoon.git",
-                "reference": "d54c0033d379be474e6b92c042ef3dcaa7769ba5"
+                "url": "https://github.com/meetmorrowsolonmars/php-lib-conjoon.git",
+                "reference": "2a7c8bba0ed7020e4070d9a33fd65c25568053fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/conjoon/php-lib-conjoon/zipball/d54c0033d379be474e6b92c042ef3dcaa7769ba5",
-                "reference": "d54c0033d379be474e6b92c042ef3dcaa7769ba5",
+                "url": "https://api.github.com/repos/meetmorrowsolonmars/php-lib-conjoon/zipball/2a7c8bba0ed7020e4070d9a33fd65c25568053fd",
+                "reference": "2a7c8bba0ed7020e4070d9a33fd65c25568053fd",
                 "shasum": ""
             },
             "require": {
@@ -95,7 +95,12 @@
                     "Conjoon\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Tests\\Conjoon\\": "tests/",
+                    "Tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -107,10 +112,9 @@
             ],
             "description": "PHP email library",
             "support": {
-                "issues": "https://github.com/conjoon/php-lib-conjoon/issues",
-                "source": "https://github.com/conjoon/php-lib-conjoon/tree/v1.0.3"
+                "source": "https://github.com/meetmorrowsolonmars/php-lib-conjoon/tree/feature/send-custom-headers"
             },
-            "time": "2022-11-09T18:45:01+00:00"
+            "time": "2023-01-06T13:38:06+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -8042,11 +8046,14 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "conjoon/php-lib-conjoon": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.4"
+        "php": ">=7.4",
+        "ext-json": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

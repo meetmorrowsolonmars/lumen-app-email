@@ -4,11 +4,12 @@
     "license": "MIT",
     "type": "project",
     "repositories": [
-        {"url": "https://horde-satis.maintaina.com", "type": "composer"}
+        {"url": "https://horde-satis.maintaina.com", "type": "composer"},
+        {"url": "https://github.com/meetmorrowsolonmars/php-lib-conjoon", "type": "vcs"}
     ],
     "require": {
         "php": ">=7.4",
-        "conjoon/php-lib-conjoon": "^1.0",
+        "conjoon/php-lib-conjoon": "dev-feature/send-custom-headers",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.5",
         "laravel/lumen-framework": "5.8.*",
